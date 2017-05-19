@@ -2460,3 +2460,5 @@ module_exit(ist30xx_exit);
 MODULE_DESCRIPTION("Imagis IST30XX touch driver");
 MODULE_LICENSE("GPL");
 
+
+
