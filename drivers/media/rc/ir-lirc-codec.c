@@ -122,6 +122,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
 
 	start = ktime_get();
 #endif
+
 	lirc = lirc_get_pdata(file);
 	if (!lirc)
 		return -EFAULT;
@@ -147,6 +148,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
 		ret = -ENOSYS;
 		goto out;
 	}
+
 #ifndef CONFIG_IR_PWM
 	for (i = 0; i < count; i++) {
 		if (txbuf[i] > IR_MAX_DURATION / 1000 - duration || !txbuf[i]) {
@@ -157,14 +159,18 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
 		duration += txbuf[i];
 	}
 #endif
+
 	ret = dev->tx_ir(dev, txbuf, count);
 	if (ret < 0)
 		goto out;
+
 #ifndef CONFIG_IR_PWM
 	for (duration = i = 0; i < ret; i++)
 		duration += txbuf[i];
 #endif
+
 	ret *= sizeof(unsigned int);
+
 #ifndef CONFIG_IR_PWM
 	/*
 	 * The lircd gap calculation expects the write function to
@@ -177,6 +183,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
 		schedule_timeout(usecs_to_jiffies(towait));
 	}
 #endif
+
 out:
 	kfree(txbuf);
 	return ret;
@@ -291,14 +298,11 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
 		if (!dev->max_timeout)
 			return -ENOSYS;
 
-		/* Check for multiply overflow */
-		if (val > U32_MAX / 1000)
-			return -EINVAL;
-
 		tmp = val * 1000;
 
-		if (tmp < dev->min_timeout || tmp > dev->max_timeout)
-			return -EINVAL;
+		if (tmp < dev->min_timeout ||
+		    tmp > dev->max_timeout)
+				return -EINVAL;
 
 		dev->timeout = tmp;
 		break;
@@ -476,3 +480,4 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jarod Wilson <jarod@redhat.com>");
 MODULE_AUTHOR("Red Hat Inc. (http://www.redhat.com)");
 MODULE_DESCRIPTION("LIRC IR handler bridge");
+
