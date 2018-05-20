@@ -31,7 +31,7 @@ echo -e "***********************************************$nocol"
 LC_ALL=C date +%Y-%m-%d
 kernel_dir=$PWD
 build=$kernel_dir/out
-export CROSS_COMPILE="/home/lordarcadius/aarch64-linaro-linux-android/bin/aarch64-linaro-linux-android-"
+export CROSS_COMPILE="/home/vipul/kernels/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-"
 kernel="ElectraBlue"
 version="8.1"
 vendor="xiaomi"
@@ -84,12 +84,11 @@ fi
 echo "Extracting files..."
 if [ -f arch/arm64/boot/"$kerneltype" ]; then
 	cp arch/arm64/boot/"$kerneltype" "$zip"/"$kerneltype"
-#        mkdir -p zip/modules/pronto
-#	cp drivers/staging/prima/wlan.ko zip/modules/pronto/pronto_wlan.ko
-	find . -name '*.ko' -exec cp {} $modules_dir/ \;
+        mkdir -p zip/modules/pronto
+	cp drivers/staging/prima/wlan.ko zip/modules/wlan.ko
+#	find . -name '*.ko' -exec cp {} $modules_dir/ \;
 	"$CROSS_COMPILE"strip --strip-unneeded "$zip"/modules/*.ko &> /dev/null
-        mkdir -p zip/modules/pronto/
-        mv zip/modules/wlan.ko zip/modules/pronto/pronto_wlan.ko
+        cp zip/modules/wlan.ko zip/modules/pronto/pronto_wlan.ko
 else
 	echo "Nothing has been made..."
 	read -p "Clean working directory..(y/n)? : " achoice
@@ -128,10 +127,6 @@ if [ -f "$zip"/"$kerneltype" ]; then
 	rm "$kerneltype"
 	cd ..
 	rm -rf arch/arm64/boot/"$kerneltype"
-	echo "Generating changelog..."
-        git --no-pager log --pretty=oneline --abbrev-commit 63940662c5bd707159770d06b4db10f6ee8b73af..HEAD > zip/changelog.txt
-        paste zip/changelog.txt
-        #rm zip/changelog.txt
 	export outdir=""$build""
         export out=""$build""
         export OUT=""$build""
