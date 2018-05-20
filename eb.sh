@@ -32,7 +32,7 @@ export ARCH=arm64
 export SUBARCH=arm64
 export KBUILD_BUILD_USER="LordArcadius"
 export KBUILD_BUILD_HOST="DroidBox"
-export CROSS_COMPILE=/home/vipul/kernels/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export CROSS_COMPILE=/home/vipul/kernels/toolchains/aarch64-linux-android/bin/aarch64-opt-linux-android-
 
 # Compilation Scripts Are Below
 
